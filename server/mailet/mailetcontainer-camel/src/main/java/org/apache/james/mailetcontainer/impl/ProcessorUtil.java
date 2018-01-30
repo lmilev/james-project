@@ -25,8 +25,8 @@ import java.util.Collection;
 
 import javax.mail.MessagingException;
 
-import org.apache.mailet.Mail;
 import org.apache.james.core.MailAddress;
+import org.apache.mailet.Mail;
 import org.apache.mailet.MailetException;
 import org.slf4j.Logger;
 
@@ -63,6 +63,7 @@ public class ProcessorUtil {
         String errorString = sout.toString();
         mail.setErrorMessage(errorString);
         logger.error(errorString);
+        mail.setAttribute(Mail.MAILET_ERROR_ATTRIBUTE_NAME, me);
     }
 
     /**
@@ -74,7 +75,7 @@ public class ProcessorUtil {
      */
     public static void verifyMailAddresses(Collection<MailAddress> col) throws MessagingException {
         try {
-            MailAddress addresses[] = col.toArray(new MailAddress[col.size()]);
+            MailAddress[] addresses = col.toArray(new MailAddress[col.size()]);
 
             // Why is this here? According to the javadoc for
             // java.util.Collection.toArray(Object[]), this should

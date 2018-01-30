@@ -51,16 +51,24 @@ public class InMemoryDNSService implements DNSService {
         return new DNSRecord(addresses, mxRecords, txtRecords);
     }
 
-    public void registerRecord(String hostname, InetAddress address, String mxRecord) {
+    public InMemoryDNSService registerRecord(String hostname, InetAddress address, String mxRecord) {
         Collection<String> emptyTxtRecords = ImmutableList.of();
         registerRecord(hostname, ImmutableList.of(address), ImmutableList.of(mxRecord), emptyTxtRecords);
+        return this;
     }
 
-    public void registerRecord(String hostname, List<InetAddress> addresses, Collection<String> mxRecords, Collection<String> txtRecords ){
+    public InMemoryDNSService registerMxRecord(String hostname, String ip) throws UnknownHostException {
+        InetAddress containerIp = InetAddress.getByName(ip);
+        registerRecord(hostname, containerIp, hostname);
+        return this;
+    }
+
+    public InMemoryDNSService registerRecord(String hostname, List<InetAddress> addresses, Collection<String> mxRecords, Collection<String> txtRecords) {
         records.put(hostname, dnsRecordFor(mxRecords, txtRecords, addresses));
+        return this;
     }
 
-    public void dropRecord(String hostname){
+    public void dropRecord(String hostname) {
         records.remove(hostname);
     }
 
@@ -120,7 +128,7 @@ public class InMemoryDNSService implements DNSService {
             .orElseThrow(() -> new UnknownHostException());
     }
 
-    private static class DNSRecord {
+    public static class DNSRecord {
 
         final Collection<String> mxRecords;
         final Collection<String> txtRecords;
@@ -132,7 +140,7 @@ public class InMemoryDNSService implements DNSService {
             this.txtRecords = txtRecords;
         }
 
-        public boolean contains(InetAddress address){
+        public boolean contains(InetAddress address) {
             return addresses.contains(address);
         }
     }

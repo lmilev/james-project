@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.annotation.PostConstruct;
 
@@ -88,6 +89,11 @@ public class MailRepositoryStoreBeanFactory extends AbstractBeanFactory implemen
 
     }
 
+    @Override
+    public Optional<MailRepository> get(String url) throws MailRepositoryStoreException {
+        return Optional.ofNullable(repositories.get(url));
+    }
+
     /**
      * <p>
      * Registers a new mail repository type in the mail store's registry based
@@ -150,8 +156,9 @@ public class MailRepositoryStoreBeanFactory extends AbstractBeanFactory implemen
     @SuppressWarnings("deprecation")
     public synchronized MailRepository select(String destination) throws MailRepositoryStoreException {
         int idx = destination.indexOf(':');
-        if (idx == -1)
+        if (idx == -1) {
             throw new MailRepositoryStoreException("Destination is malformed. Must be a valid URL: " + destination);
+        }
         String protocol = destination.substring(0, idx);
 
         String repID = destination;

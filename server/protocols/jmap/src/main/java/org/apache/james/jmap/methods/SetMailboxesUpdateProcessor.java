@@ -158,7 +158,7 @@ public class SetMailboxesUpdateProcessor implements SetMailboxesProcessor {
         } catch (MailboxException e) {
             LOGGER.error("Error while updating mailbox", e);
             responseBuilder.notUpdated(mailboxId, SetError.builder()
-                    .type( "anErrorOccurred")
+                    .type("anErrorOccurred")
                     .description("An error occurred when updating the mailbox")
                     .build());
         }
@@ -216,7 +216,7 @@ public class SetMailboxesUpdateProcessor implements SetMailboxesProcessor {
     private boolean nameContainsPathDelimiter(MailboxUpdateRequest updateRequest, char pathDelimiter) {
         return updateRequest.getName()
                 .filter(name -> name.contains(String.valueOf(pathDelimiter)))
-                .isPresent() ;
+                .isPresent();
     }
 
     private void validateParent(Mailbox mailbox, MailboxUpdateRequest updateRequest, MailboxSession mailboxSession) throws MailboxException, MailboxHasChildException {

@@ -41,10 +41,10 @@ public abstract class AbstractRecipientRewriteTableTest {
     @Rule public ExpectedException expectedException = ExpectedException.none();
 
     protected AbstractRecipientRewriteTable virtualUserTable;
-    protected final static int REGEX_TYPE = 0;
-    protected final static int ERROR_TYPE = 1;
-    protected final static int ADDRESS_TYPE = 2;
-    protected final static int ALIASDOMAIN_TYPE = 3;
+    protected static final int REGEX_TYPE = 0;
+    protected static final int ERROR_TYPE = 1;
+    protected static final int ADDRESS_TYPE = 2;
+    protected static final int ALIASDOMAIN_TYPE = 3;
 
     public void setUp() throws Exception {
         virtualUserTable = getRecipientRewriteTable();
@@ -57,7 +57,7 @@ public abstract class AbstractRecipientRewriteTableTest {
         if (mappings != null) {
 
             for (String key : virtualUserTable.getAllMappings().keySet()) {
-                String args[] = key.split("@");
+                String[] args = key.split("@");
 
                 Mappings map = mappings.get(key);
 
@@ -131,17 +131,6 @@ public abstract class AbstractRecipientRewriteTableTest {
         assertThat(virtualUserTable.getAllMappings()).describedAs("One mappingline").hasSize(1);
 
         removeMapping(user, domain, address, ADDRESS_TYPE);
-
-            /*
-             * TEMPORARILY REMOVE JDBC specific test String invalidAddress=
-             * ".*@localhost2:"; boolean catched = false; if (virtualUserTable
-             * instanceof JDBCRecipientRewriteTable) { try {
-             * assertTrue("Added virtual mapping", addMapping(user, domain,
-             * invalidAddress, ADDRESS_TYPE)); } catch (InvalidMappingException
-             * e) { catched = true; }
-             * assertTrue("Invalid Mapping throw exception" , catched); }
-             */
-
 
         removeMapping(user, domain, address2, ADDRESS_TYPE);
 

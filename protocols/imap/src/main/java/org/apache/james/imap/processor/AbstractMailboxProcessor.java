@@ -68,7 +68,7 @@ import org.apache.james.metrics.api.TimeMetric;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-abstract public class AbstractMailboxProcessor<M extends ImapRequest> extends AbstractChainedProcessor<M> {
+public abstract class AbstractMailboxProcessor<M extends ImapRequest> extends AbstractChainedProcessor<M> {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractMailboxProcessor.class);
 
     public static final String IMAP_PREFIX = "IMAP-";
@@ -222,9 +222,10 @@ abstract public class AbstractMailboxProcessor<M extends ImapRequest> extends Ab
             final Collection<MessageUid> flagUpdateUids = selected.flagUpdateUids();
             if (!flagUpdateUids.isEmpty()) {
                 Iterator<MessageRange> ranges = MessageRange.toRanges(flagUpdateUids).iterator();
-                while(ranges.hasNext()) {
-                 if (messageManager == null)
-                 messageManager = getMailbox(session, selected);
+                while (ranges.hasNext()) {
+                 if (messageManager == null) {
+                     messageManager = getMailbox(session, selected);
+                 }
                     addFlagsResponses(session, selected, responder, useUid, ranges.next(), messageManager, mailboxSession);
                 }
 
@@ -373,13 +374,15 @@ abstract public class AbstractMailboxProcessor<M extends ImapRequest> extends Ab
             sb.append(mailboxPath.getNamespace());
         }
         if (mailboxPath.getUser() != null && !mailboxPath.getUser().equals("")) {
-            if (sb.length() > 0)
+            if (sb.length() > 0) {
                 sb.append(delimiter);
+            }
             sb.append(mailboxPath.getUser());
         }
         if (mailboxPath.getName() != null && !mailboxPath.getName().equals("")) {
-            if (sb.length() > 0)
+            if (sb.length() > 0) {
                 sb.append(delimiter);
+            }
             sb.append(mailboxPath.getName());
         }
         return sb.toString();
@@ -491,6 +494,7 @@ abstract public class AbstractMailboxProcessor<M extends ImapRequest> extends Ab
         }
         return uid.get();
     }
+    
     /**
      * Format MessageRange to RANGE format applying selected folder min & max
      * UIDs constraints
@@ -566,7 +570,7 @@ abstract public class AbstractMailboxProcessor<M extends ImapRequest> extends Ab
                 }
                 MessageUid from = nr.getLowValue();
                 MessageUid to = nr.getHighValue();
-                while(from.compareTo(to) <= 0) {
+                while (from.compareTo(to) <= 0) {
                     vanishedUids.add(from);
                     from = from.next();
                 }
@@ -576,7 +580,7 @@ abstract public class AbstractMailboxProcessor<M extends ImapRequest> extends Ab
             searchQuery.andCriteria(SearchQuery.uid(nRanges));
             searchQuery.andCriteria(SearchQuery.modSeqGreaterThan(changedSince));
             Iterator<MessageUid> uids = mailbox.search(searchQuery, session);
-            while(uids.hasNext()) {
+            while (uids.hasNext()) {
                 vanishedUids.remove(uids.next());
             }
             UidRange[] vanishedIdRanges = uidRanges(MessageRange.toRanges(vanishedUids));
@@ -592,7 +596,7 @@ abstract public class AbstractMailboxProcessor<M extends ImapRequest> extends Ab
         UidRange[] idRanges = new UidRange[mRanges.size()];
         Iterator<MessageRange> mIt = mRanges.iterator();
         int i = 0;
-        while(mIt.hasNext()) {
+        while (mIt.hasNext()) {
             MessageRange mr = mIt.next();
             UidRange ir;
             if (mr.getType() == Type.ONE) {

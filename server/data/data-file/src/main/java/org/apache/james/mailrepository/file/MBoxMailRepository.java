@@ -77,6 +77,8 @@ import org.apache.mailet.Mail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.fge.lambdas.Throwing;
+import com.google.common.collect.ImmutableList;
 import com.google.common.hash.Hashing;
 
 /**
@@ -112,24 +114,27 @@ import com.google.common.hash.Hashing;
  * slower (read from disk and parse). Therefore this implementation is best
  * suited to people who wish to use the mbox format for taking data out of James
  * and into something else (IMAP server or mail list displayer)
+ *
+ * @Depracted: See JAMES-2323
+ *
+ * Will be removed in James 3.2.0 upcoming release.
+ *
+ * Use a modern, maintained MailRepository instead. For instead FileMailRepository.
  */
-
+@Deprecated
 public class MBoxMailRepository implements MailRepository, Configurable {
     private static final Logger LOGGER = LoggerFactory.getLogger(MBoxMailRepository.class);
 
     static final SimpleDateFormat dy = new SimpleDateFormat("EE MMM dd HH:mm:ss yyyy", Locale.US);
     static final String LOCKEXT = ".lock";
     static final String WORKEXT = ".work";
-    static final int LOCKSLEEPDELAY = 2000; // 2 second back off in the event of
-                                            // a problem with the lock file
+    static final int LOCKSLEEPDELAY = 2000; // 2 second back off in the event of a problem with the lock file
     static final int MAXSLEEPTIMES = 100; //
-    static final long MLISTPRESIZEFACTOR = 10 * 1024; // The hash table will be
-                                                      // loaded with a initial
-                                                      // capacity of
-                                                      // filelength/MLISTPRESIZEFACTOR
-    static final long DEFAULTMLISTCAPACITY = 20; // Set up a hashtable to have a
-                                                 // meaningful default
-
+    // The hash table will be loaded with a initial capacity of filelength/MLISTPRESIZEFACTOR
+    static final long MLISTPRESIZEFACTOR = 10 * 1024; 
+    // Set up a hashtable to have a meaningful default
+    static final long DEFAULTMLISTCAPACITY = 20; 
+    
     /**
      * Whether line buffering is turned used.
      */
@@ -151,8 +156,7 @@ public class MBoxMailRepository implements MailRepository, Configurable {
      * A callback used when a message is read from the mbox file
      */
     public interface MessageAction {
-        boolean isComplete(); // *** Not valid until AFTER each call to
-                              // messageAction(...)!
+        boolean isComplete(); // *** Not valid until AFTER each call to messageAction(...)!
 
         MimeMessage messageAction(String messageSeparator, String bodyText, long messageStart);
     }
@@ -398,12 +402,13 @@ public class MBoxMailRepository implements MailRepository, Configurable {
             if (foundMessage == null) {
                 LOGGER.debug("select - message not found {}", mboxFile);
             }
-            if (ins != null)
+            if (ins != null) {
                 try {
                     ins.close();
                 } catch (IOException e) {
                     LOGGER.error("Unable to close file (General I/O problem) {}", mboxFile, e);
                 }
+            }
         }
         return foundMessage;
     }
@@ -446,12 +451,13 @@ public class MBoxMailRepository implements MailRepository, Configurable {
         } catch (IOException e) {
             LOGGER.error("Unable to write file (General I/O problem) {}", mboxFile, e);
         } finally {
-            if (ins != null)
+            if (ins != null) {
                 try {
                     ins.close();
                 } catch (IOException e) {
                     LOGGER.error("Unable to close file (General I/O problem) {}", mboxFile, e);
                 }
+            }
         }
     }
 
@@ -497,8 +503,7 @@ public class MBoxMailRepository implements MailRepository, Configurable {
      * @see org.apache.james.mailrepository.api.MailRepository#list()
      */
     public Iterator<String> list() {
-        loadKeys();
-        ArrayList<String> keys = new ArrayList<>(mList.keySet());
+        ArrayList<String> keys = loadKeysAsArray();
 
         if (!keys.isEmpty()) {
             // find the first message. This is a trick to make sure that if
@@ -508,10 +513,15 @@ public class MBoxMailRepository implements MailRepository, Configurable {
         }
 
         LOGGER.debug("{} keys to be iterated over.", keys.size());
-        if (fifo)
-            Collections.sort(keys); // Keys is a HashSet; impose FIFO for apps
-                                    // that need it
+        if (fifo) {
+            Collections.sort(keys); // Keys is a HashSet; impose FIFO for apps that need it
+        }
         return keys.iterator();
+    }
+
+    private ArrayList<String> loadKeysAsArray() {
+        loadKeys();
+        return new ArrayList<>(mList.keySet());
     }
 
     /**
@@ -597,10 +607,8 @@ public class MBoxMailRepository implements MailRepository, Configurable {
         // by reading through the
         // once we've done that then seek to the file
         try {
-            RandomAccessFile ins = new RandomAccessFile(mboxFile, "r"); // The
-                                                                        // source
-            final RandomAccessFile outputFile = new RandomAccessFile(mboxFile + WORKEXT, "rw"); // The
-                                                                                                // destination
+            RandomAccessFile ins = new RandomAccessFile(mboxFile, "r"); // The source
+            final RandomAccessFile outputFile = new RandomAccessFile(mboxFile + WORKEXT, "rw"); // The destination
             parseMboxFile(ins, new MessageAction() {
                 public boolean isComplete() {
                     return false;
@@ -693,5 +701,16 @@ public class MBoxMailRepository implements MailRepository, Configurable {
      */
     public boolean unlock(String key) {
         return false;
+    }
+
+    @Override
+    public long size() throws MessagingException {
+        return loadKeysAsArray().size();
+    }
+
+    @Override
+    public void removeAll() throws MessagingException {
+        ImmutableList.copyOf(list())
+            .forEach(Throwing.<String>consumer(this::remove).sneakyThrow());
     }
 }

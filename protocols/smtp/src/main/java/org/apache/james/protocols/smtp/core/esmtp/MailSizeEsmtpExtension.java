@@ -49,9 +49,9 @@ public class MailSizeEsmtpExtension implements MailParametersHook, EhloExtension
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MailSizeEsmtpExtension.class);
 
-    private final static String MESG_SIZE = "MESG_SIZE"; // The size of the
-    private final static String MESG_FAILED = "MESG_FAILED";   // Message failed flag
-    private final static String[] MAIL_PARAMS = { "SIZE" };
+    private static final String MESG_SIZE = "MESG_SIZE"; // The size of the
+    private static final String MESG_FAILED = "MESG_FAILED";   // Message failed flag
+    private static final String[] MAIL_PARAMS = { "SIZE" };
     
     private static final HookResult SYNTAX_ERROR = new HookResult(HookReturnCode.DENY, SMTPRetCode.SYNTAX_ERROR_ARGUMENTS, DSNStatus.getStatus(DSNStatus.PERMANENT, DSNStatus.DELIVERY_INVALID_ARG) + " Syntactically incorrect value for SIZE parameter");
     private static final HookResult QUOTA_EXCEEDED = new HookResult(HookReturnCode.DENY, SMTPRetCode.QUOTA_EXCEEDED, DSNStatus.getStatus(DSNStatus.PERMANENT, DSNStatus.SYSTEM_MSG_TOO_BIG) + " Message size exceeds fixed maximum message size");
@@ -164,7 +164,7 @@ public class MailSizeEsmtpExtension implements MailParametersHook, EhloExtension
                 if (currentSize == null) {
                     newSize = Long.valueOf(line.remaining());
                 } else {
-                    newSize = Long.valueOf(currentSize.intValue()+line.remaining());
+                    newSize = Long.valueOf(currentSize.intValue() + line.remaining());
                 }
 
                 session.setAttachment("CURRENT_SIZE", newSize, State.Transaction);

@@ -34,12 +34,12 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.internet.ParseException;
 
+import org.apache.james.core.MailAddress;
 import org.apache.james.transport.KeyHolder;
 import org.apache.james.transport.SMIMEAttributeNames;
 import org.apache.james.user.api.UsersRepository;
 import org.apache.james.user.api.UsersRepositoryException;
 import org.apache.mailet.Mail;
-import org.apache.james.core.MailAddress;
 import org.apache.mailet.base.GenericMailet;
 import org.apache.mailet.base.RFC2822Headers;
 import org.slf4j.Logger;
@@ -488,10 +488,9 @@ public abstract class AbstractSign extends GenericMailet {
             
             MimeMessage newMessage = new MimeMessage(Session.getDefaultInstance(System.getProperties(),
             null));
-            @SuppressWarnings("unchecked")
             Enumeration<String> headerEnum = originalMessage.getAllHeaderLines();
             while (headerEnum.hasMoreElements()) {
-                newMessage.addHeaderLine((String) headerEnum.nextElement());
+                newMessage.addHeaderLine(headerEnum.nextElement());
             }
             
             newMessage.setSender(new InternetAddress(getKeyHolder().getSignerAddress(), getSignerName()));
@@ -669,11 +668,10 @@ public abstract class AbstractSign extends GenericMailet {
      * @return The string containing the headers.
      */
     protected final String getMessageHeaders(MimeMessage message) throws MessagingException {
-        @SuppressWarnings("unchecked")
         Enumeration<String> heads = message.getAllHeaderLines();
         StringBuilder headBuffer = new StringBuilder(1024);
-        while(heads.hasMoreElements()) {
-            headBuffer.append(heads.nextElement().toString()).append("\r\n");
+        while (heads.hasMoreElements()) {
+            headBuffer.append(heads.nextElement()).append("\r\n");
         }
         return headBuffer.toString();
     }
@@ -719,7 +717,7 @@ public abstract class AbstractSign extends GenericMailet {
                 sb.append(actual);
                 fromIndex = index + pattern.length();
             }
-            if (fromIndex < template.length()){
+            if (fromIndex < template.length()) {
                 sb.append(template.substring(fromIndex));
             }
             return sb.toString();

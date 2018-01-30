@@ -31,12 +31,12 @@ import org.junit.rules.ExpectedException;
 import com.google.common.collect.ImmutableMap;
 
 public class UpdateMessagePatchTest {
-    private final static String FORWARDED = "forwarded";
+    private static final String FORWARDED = "forwarded";
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
 
     @Test
-    public void UnsetUpdatePatchShouldBeValid() {
+    public void unsetUpdatePatchShouldBeValid() {
         UpdateMessagePatch emptyPatch = UpdateMessagePatch.builder().build();
         assertThat(emptyPatch.isValid()).isTrue();
     }

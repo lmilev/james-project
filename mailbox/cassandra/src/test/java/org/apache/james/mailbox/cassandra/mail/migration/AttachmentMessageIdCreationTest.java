@@ -37,15 +37,17 @@ import javax.mail.util.SharedByteArrayInputStream;
 import org.apache.james.backends.cassandra.CassandraCluster;
 import org.apache.james.backends.cassandra.DockerCassandraRule;
 import org.apache.james.backends.cassandra.init.CassandraModuleComposite;
+import org.apache.james.backends.cassandra.migration.Migration;
 import org.apache.james.backends.cassandra.utils.CassandraUtils;
+import org.apache.james.blob.cassandra.CassandraBlobId;
+import org.apache.james.blob.cassandra.CassandraBlobModule;
+import org.apache.james.blob.cassandra.CassandraBlobsDAO;
 import org.apache.james.mailbox.MessageUid;
 import org.apache.james.mailbox.cassandra.ids.CassandraId;
 import org.apache.james.mailbox.cassandra.ids.CassandraMessageId;
 import org.apache.james.mailbox.cassandra.mail.CassandraAttachmentMessageIdDAO;
-import org.apache.james.mailbox.cassandra.mail.CassandraBlobsDAO;
 import org.apache.james.mailbox.cassandra.mail.CassandraMessageDAO;
 import org.apache.james.mailbox.cassandra.modules.CassandraAttachmentModule;
-import org.apache.james.mailbox.cassandra.modules.CassandraBlobModule;
 import org.apache.james.mailbox.cassandra.modules.CassandraMessageModule;
 import org.apache.james.mailbox.model.Attachment;
 import org.apache.james.mailbox.model.AttachmentId;
@@ -86,7 +88,7 @@ public class AttachmentMessageIdCreationTest {
 
         blobsDAO = new CassandraBlobsDAO(cassandra.getConf());
         cassandraMessageDAO = new CassandraMessageDAO(cassandra.getConf(), cassandra.getTypesProvider(),
-            blobsDAO, CassandraUtils.WITH_DEFAULT_CONFIGURATION, messageIdFactory);
+            blobsDAO, new CassandraBlobId.Factory(), CassandraUtils.WITH_DEFAULT_CONFIGURATION, messageIdFactory);
 
         attachmentMessageIdDAO = new CassandraAttachmentMessageIdDAO(cassandra.getConf(),
             new CassandraMessageId.Factory(), CassandraUtils.WITH_DEFAULT_CONFIGURATION);
@@ -99,7 +101,7 @@ public class AttachmentMessageIdCreationTest {
     @Test
     public void emptyMigrationShouldSucceed() {
         assertThat(migration.run())
-            .isEqualTo(Migration.MigrationResult.COMPLETED);
+            .isEqualTo(Migration.Result.COMPLETED);
     }
 
     @Test
@@ -110,7 +112,7 @@ public class AttachmentMessageIdCreationTest {
         cassandraMessageDAO.save(message).join();
 
         assertThat(migration.run())
-            .isEqualTo(Migration.MigrationResult.COMPLETED);
+            .isEqualTo(Migration.Result.COMPLETED);
     }
 
     @Test
@@ -121,7 +123,7 @@ public class AttachmentMessageIdCreationTest {
         cassandraMessageDAO.save(message).join();
 
         assertThat(migration.run())
-            .isEqualTo(Migration.MigrationResult.COMPLETED);
+            .isEqualTo(Migration.Result.COMPLETED);
     }
 
     @Test
@@ -145,7 +147,7 @@ public class AttachmentMessageIdCreationTest {
 
         when(cassandraMessageDAO.retrieveAllMessageIdAttachmentIds()).thenThrow(new RuntimeException());
 
-        assertThat(migration.run()).isEqualTo(Migration.MigrationResult.PARTIAL);
+        assertThat(migration.run()).isEqualTo(Migration.Result.PARTIAL);
     }
 
     @Test
@@ -162,21 +164,21 @@ public class AttachmentMessageIdCreationTest {
         when(attachmentMessageIdDAO.storeAttachmentForMessageId(any(AttachmentId.class), any(MessageId.class)))
             .thenThrow(new RuntimeException());
 
-        assertThat(migration.run()).isEqualTo(Migration.MigrationResult.PARTIAL);
+        assertThat(migration.run()).isEqualTo(Migration.Result.PARTIAL);
     }
 
     private SimpleMailboxMessage createMessage(MessageId messageId, Collection<MessageAttachment> attachments) {
         MessageUid messageUid = MessageUid.of(1);
         CassandraId mailboxId = CassandraId.timeBased();
         String content = "Subject: Any subject \n\nThis is the body\n.\n";
-        int BODY_START = 22;
+        int bodyStart = 22;
 
         return SimpleMailboxMessage.builder()
             .messageId(messageId)
             .mailboxId(mailboxId)
             .uid(messageUid)
             .internalDate(new Date())
-            .bodyStartOctet(BODY_START)
+            .bodyStartOctet(bodyStart)
             .size(content.length())
             .content(new SharedByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8)))
             .flags(new Flags())

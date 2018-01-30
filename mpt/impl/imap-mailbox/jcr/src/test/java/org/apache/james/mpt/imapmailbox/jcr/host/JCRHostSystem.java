@@ -143,17 +143,19 @@ public class JCRHostSystem extends JamesImapHostSystem {
         shutdownRepository();
     }
     
-    private void shutdownRepository() throws Exception{
+    private void shutdownRepository() throws Exception {
         if (repository != null) {
             repository.shutdown();
             repository = null;
         }
     }
     
-    private void delete(File home) throws Exception{
+    private void delete(File home) throws Exception {
         if (home.exists()) {
             File[] files = home.listFiles();
-            if (files == null) return;
+            if (files == null) {
+                return;
+            }
             for (File f : files) {
                 if (f.isDirectory()) {
                     delete(f);

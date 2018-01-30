@@ -41,8 +41,8 @@ import org.apache.james.mailbox.model.MailboxConstants;
 import org.apache.james.mailbox.store.probe.MailboxProbe;
 import org.apache.james.modules.MailboxProbeImpl;
 import org.apache.james.probe.DataProbe;
-import org.apache.james.utils.JmapGuiceProbe;
 import org.apache.james.utils.DataProbeImpl;
+import org.apache.james.utils.JmapGuiceProbe;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -384,7 +384,7 @@ public abstract class VacationIntegrationTest {
                 .body(SECOND_NAME, equalTo("messages"))
                 .body(SECOND_ARGUMENTS + ".list", hasSize(2));
             return true;
-        } catch(AssertionError e) {
+        } catch (AssertionError e) {
             return false;
         }
     }
@@ -393,7 +393,7 @@ public abstract class VacationIntegrationTest {
         try {
             assertOneMessageReceived(recipientToken, mailboxId, expectedTextBody, expectedFrom, expectedTo);
             return true;
-        } catch(AssertionError e) {
+        } catch (AssertionError e) {
             return false;
         }
     }

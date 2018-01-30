@@ -85,7 +85,7 @@ public class FetchMail implements Runnable, Configurable {
     /**
      * Key fields for DynamicAccounts.
      */
-    private final static class DynamicAccountKey {
+    private static final class DynamicAccountKey {
         /**
          * The base user name without prfix or suffix
          */
@@ -164,7 +164,7 @@ public class FetchMail implements Runnable, Configurable {
 
     }
 
-    private final static class ParsedDynamicAccountParameters {
+    private static final class ParsedDynamicAccountParameters {
         private String fieldUserPrefix;
         private String fieldUserSuffix;
 
@@ -416,14 +416,17 @@ public class FetchMail implements Runnable, Configurable {
 
         // Setup the Accounts
         List<HierarchicalConfiguration> allAccounts = configuration.configurationsAt("accounts");
-        if (allAccounts.size() < 1)
+        if (allAccounts.size() < 1) {
             throw new ConfigurationException("Missing <accounts> section.");
-        if (allAccounts.size() > 1)
+        }
+        if (allAccounts.size() > 1) {
             throw new ConfigurationException("Too many <accounts> sections, there must be exactly one");
+        }
         HierarchicalConfiguration accounts = allAccounts.get(0);
 
-        if (!accounts.getKeys().hasNext())
+        if (!accounts.getKeys().hasNext()) {
             throw new ConfigurationException("Missing <account> section.");
+        }
 
         int i = 0;
         // Create an Account for every configured account
@@ -658,8 +661,9 @@ public class FetchMail implements Runnable, Configurable {
             throw new ConfigurationException("Unable to acces UsersRepository", e);
         }
         Map<DynamicAccountKey, DynamicAccount> oldAccounts = getDynamicAccountsBasic();
-        if (null == oldAccounts)
+        if (null == oldAccounts) {
             oldAccounts = new HashMap<>(0);
+        }
 
         // Process each ParsedDynamicParameters
         for (ParsedDynamicAccountParameters parsedDynamicAccountParameters : getParsedDynamicAccountParameters()) {
@@ -669,8 +673,9 @@ public class FetchMail implements Runnable, Configurable {
             // newAccounts are created.
             Iterator<DynamicAccountKey> oldAccountsIterator = oldAccounts.keySet().iterator();
             while (oldAccountsIterator.hasNext()) {
-                if (accounts.containsKey(oldAccountsIterator.next()))
+                if (accounts.containsKey(oldAccountsIterator.next())) {
                     oldAccountsIterator.remove();
+                }
             }
             // Add this parameter's accounts to newAccounts
             newAccounts.putAll(accounts);

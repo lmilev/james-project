@@ -52,7 +52,7 @@ public class MainStepdefs {
     public MailboxProbe mailboxProbe;
     public ACLProbe aclProbe;
     public MessageIdProbe messageIdProbe;
-    public Runnable awaitMethod = () -> {};
+    public Runnable awaitMethod = () -> { };
     public MessageId.Factory messageIdFactory;
     
     public void init() throws Exception {
@@ -85,6 +85,7 @@ public class MainStepdefs {
             .getMailbox(namespace, username, mailbox)
             .getMailboxId();
     }
+    
     public String getMailboxIds(String username, List<String> mailboxes) {
         return Joiner.on("\",\"")
             .join(getMailboxIdsList(username, mailboxes.stream()));

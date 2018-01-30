@@ -58,21 +58,28 @@ import org.apache.commons.io.IOUtils;
 import org.apache.jackrabbit.commons.cnd.CndImporter;
 import org.apache.jackrabbit.util.ISO9075;
 import org.apache.jackrabbit.util.Text;
-import org.apache.james.server.core.MailImpl;
+import org.apache.james.core.MailAddress;
 import org.apache.james.mailrepository.api.MailRepository;
 import org.apache.james.mailrepository.lib.AbstractMailRepository;
+import org.apache.james.server.core.MailImpl;
 import org.apache.mailet.Mail;
-import org.apache.james.core.MailAddress;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Mail repository that is backed by a JCR content repository.
+ *
+ * @Depracted: See JAMES-2323
+ *
+ * Will be removed in James 3.2.0 upcoming release.
+ *
+ * Use a modern, maintained MailRepository instead. For instead FileMailRepository.
  */
+@Deprecated
 public class JCRMailRepository extends AbstractMailRepository implements MailRepository {
     private static final Logger LOGGER = LoggerFactory.getLogger(JCRMailRepository.class);
 
-    private final static String MAIL_PATH = "mailrepository";
+    private static final String MAIL_PATH = "mailrepository";
 
     private Repository repository;
     private SimpleCredentials creds;

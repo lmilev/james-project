@@ -21,8 +21,6 @@ package org.apache.james.webadmin.routes;
 
 import static com.jayway.restassured.RestAssured.when;
 import static com.jayway.restassured.RestAssured.with;
-import static com.jayway.restassured.config.EncoderConfig.encoderConfig;
-import static com.jayway.restassured.config.RestAssuredConfig.newConfig;
 import static org.apache.james.webadmin.Constants.SEPARATOR;
 import static org.apache.james.webadmin.WebAdminServer.NO_CONFIGURATION;
 import static org.apache.james.webadmin.routes.UserMailboxesRoutes.USERS_BASE;
@@ -34,7 +32,6 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
@@ -65,7 +62,6 @@ import org.junit.runner.RunWith;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.jayway.restassured.RestAssured;
-import com.jayway.restassured.builder.RequestSpecBuilder;
 import com.jayway.restassured.http.ContentType;
 
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
@@ -88,12 +84,8 @@ public class UserMailboxesRoutesTest {
         webAdminServer.configure(NO_CONFIGURATION);
         webAdminServer.await();
 
-        RestAssured.requestSpecification = new RequestSpecBuilder()
-            .setContentType(ContentType.JSON)
-            .setAccept(ContentType.JSON)
+        RestAssured.requestSpecification = WebAdminUtils.buildRequestSpecification(webAdminServer)
             .setBasePath(USERS_BASE + SEPARATOR + USERNAME + SEPARATOR + UserMailboxesRoutes.MAILBOXES)
-            .setPort(webAdminServer.getPort().get().getValue())
-            .setConfig(newConfig().encoderConfig(encoderConfig().defaultContentCharset(StandardCharsets.UTF_8)))
             .build();
     }
 
@@ -216,7 +208,7 @@ public class UserMailboxesRoutesTest {
             when(usersRepository.contains(USERNAME)).thenReturn(false);
 
             Map<String, Object> errors = when()
-                .put(MAILBOX_NAME+ "*")
+                .put(MAILBOX_NAME + "*")
             .then()
                 .statusCode(HttpStatus.BAD_REQUEST_400)
                 .contentType(ContentType.JSON)
@@ -276,7 +268,7 @@ public class UserMailboxesRoutesTest {
             when(usersRepository.contains(USERNAME)).thenReturn(false);
 
             Map<String, Object> errors = when()
-                .put(MAILBOX_NAME+ "%")
+                .put(MAILBOX_NAME + "%")
             .then()
                 .statusCode(HttpStatus.BAD_REQUEST_400)
                 .contentType(ContentType.JSON)
@@ -336,7 +328,7 @@ public class UserMailboxesRoutesTest {
             when(usersRepository.contains(USERNAME)).thenReturn(false);
 
             Map<String, Object> errors = when()
-                .put(MAILBOX_NAME+ "#")
+                .put(MAILBOX_NAME + "#")
             .then()
                 .statusCode(HttpStatus.BAD_REQUEST_400)
                 .contentType(ContentType.JSON)
@@ -396,7 +388,7 @@ public class UserMailboxesRoutesTest {
             when(usersRepository.contains(USERNAME)).thenReturn(false);
 
             Map<String, Object> errors = when()
-                .put(MAILBOX_NAME+ "&")
+                .put(MAILBOX_NAME + "&")
             .then()
                 .statusCode(HttpStatus.BAD_REQUEST_400)
                 .contentType(ContentType.JSON)

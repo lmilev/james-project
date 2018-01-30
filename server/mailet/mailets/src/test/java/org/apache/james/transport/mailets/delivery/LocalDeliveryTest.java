@@ -35,6 +35,7 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeBodyPart;
 
 import org.apache.james.core.MailAddress;
+import org.apache.james.core.builder.MimeMessageBuilder;
 import org.apache.james.mailbox.MailboxManager;
 import org.apache.james.mailbox.MailboxSession;
 import org.apache.james.mailbox.MessageManager;
@@ -47,7 +48,6 @@ import org.apache.mailet.Mail;
 import org.apache.mailet.base.test.FakeMail;
 import org.apache.mailet.base.test.FakeMailContext;
 import org.apache.mailet.base.test.FakeMailetConfig;
-import org.apache.mailet.base.test.MimeMessageBuilder;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -135,11 +135,9 @@ public class LocalDeliveryTest {
                             .data("toto")
                             .disposition(MimeBodyPart.ATTACHMENT)
                             .filename("file.txt")
-                            .addHeader("Content-Type", "application/sieve; charset=UTF-8")
-                            .build())
-                    .build())
+                            .addHeader("Content-Type", "application/sieve; charset=UTF-8")))
                 .state(Mail.DEFAULT)
-                .recipient(new MailAddress("receiver@domain.com"))
+                .recipient("receiver@domain.com")
                 .build();
     }
 

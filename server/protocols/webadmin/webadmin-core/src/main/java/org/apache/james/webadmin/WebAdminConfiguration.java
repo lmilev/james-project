@@ -67,6 +67,7 @@ public class WebAdminConfiguration {
             this.enabled = Optional.of(isEnabled);
             return this;
         }
+        
         public Builder enabled() {
             return enable(true);
         }
@@ -85,11 +86,11 @@ public class WebAdminConfiguration {
             return this;
         }
 
-        public Builder CORSenabled() {
+        public Builder corsEnabled() {
             return enableCORS(true);
         }
 
-        public Builder CORSdisabled() {
+        public Builder corsDisabled() {
             return enableCORS(false);
         }
 

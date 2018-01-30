@@ -33,9 +33,9 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMessage.RecipientType;
 import javax.mail.internet.NewsAddress;
 
+import org.apache.james.core.MailAddress;
 import org.apache.james.transport.mailets.managesieve.ManageSieveMailet;
 import org.apache.mailet.Mail;
-import org.apache.james.core.MailAddress;
 import org.apache.mailet.Mailet;
 import org.apache.mailet.MailetConfig;
 import org.slf4j.Logger;
@@ -100,14 +100,12 @@ public class InstrumentationMailet implements Mailet {
             LOGGER.info("Received: " + message.getReceivedDate());
             LOGGER.info("Sent: " + message.getSentDate());
 
-            @SuppressWarnings("unchecked")
             Enumeration<String> allHeadersLines = message.getAllHeaderLines();
             while (allHeadersLines.hasMoreElements()) {
                 String header = allHeadersLines.nextElement();
                 LOGGER.info("Header Line:= " + header);
             }
 
-            @SuppressWarnings("unchecked")
             Enumeration<Header> allHeadersEnumeration = message.getAllHeaders();
             while (allHeadersEnumeration.hasMoreElements()) {
                 Header header = allHeadersEnumeration.nextElement();
@@ -148,7 +146,6 @@ public class InstrumentationMailet implements Mailet {
         LOGGER.info("######## MAIL ENDS");
     }
 
-    @SuppressWarnings("Slf4jStringConcat")
     private void printAddresses(Address[] addresses, String prefix) {
         for (Address address1 : addresses) {
             if (address1 instanceof InternetAddress) {

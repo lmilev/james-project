@@ -34,16 +34,17 @@ import org.jboss.netty.util.HashedWheelTimer;
  * 
  *
  */
-public abstract class AbstractChannelPipelineFactory implements ChannelPipelineFactory, ExternalResourceReleasable{
-    public final static int MAX_LINE_LENGTH = 8192;
+public abstract class AbstractChannelPipelineFactory implements ChannelPipelineFactory, ExternalResourceReleasable {
+    public static final int MAX_LINE_LENGTH = 8192;
 
     protected final ConnectionLimitUpstreamHandler connectionLimitHandler;
     protected final ConnectionPerIpLimitUpstreamHandler connectionPerIpLimitHandler;
     private final HashedWheelTimer timer = new HashedWheelTimer();
     private final ChannelGroupHandler groupHandler;
-	private final int timeout;
+    private final int timeout;
     private final ExecutionHandler eHandler;
     private final ChannelHandlerFactory frameHandlerFactory;
+    
     public AbstractChannelPipelineFactory(int timeout, int maxConnections, int maxConnectsPerIp, ChannelGroup channels) {
         this(timeout, maxConnections, maxConnectsPerIp, channels, null, new LineDelimiterBasedChannelHandlerFactory(MAX_LINE_LENGTH));
     }

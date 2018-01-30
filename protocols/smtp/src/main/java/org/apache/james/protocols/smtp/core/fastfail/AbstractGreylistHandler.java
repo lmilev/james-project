@@ -54,6 +54,7 @@ public abstract class AbstractGreylistHandler implements RcptHook {
             + " Temporary rejected: Reconnect to fast. Please try again later");
     private static final HookResult TEMPORARY_REJECT = new HookResult(HookReturnCode.DENYSOFT, SMTPRetCode.LOCAL_ERROR, DSNStatus.getStatus(DSNStatus.TRANSIENT, DSNStatus.NETWORK_DIR_SERVER) 
             + " Temporary rejected: Please try again later");
+
     public void setUnseenLifeTime(long unseenLifeTime) {
         this.unseenLifeTime = unseenLifeTime;
     }
@@ -71,8 +72,12 @@ public abstract class AbstractGreylistHandler implements RcptHook {
         String recip = "";
         String sender = "";
 
-        if (recipAddress != null) recip = recipAddress.toString();
-        if (senderAddress != null) sender = senderAddress.toString();
+        if (recipAddress != null) {
+            recip = recipAddress.toString();
+        }
+        if (senderAddress != null) {
+            sender = senderAddress.toString();
+        }
     
         long time = System.currentTimeMillis();
         String ipAddress = session.getRemoteAddress().getAddress().getHostAddress();

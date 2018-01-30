@@ -258,7 +258,7 @@ public class DNSJavaService implements DNSService, DNSServiceMBean, Configurable
      * @throws TemporaryResolutionException get thrown on temporary problems
      */
     private List<String> findMXRecordsRaw(String hostname) throws TemporaryResolutionException {
-        Record answers[] = lookup(hostname, Type.MX, "MX");
+        Record[] answers = lookup(hostname, Type.MX, "MX");
         List<String> servers = new ArrayList<>();
         if (answers == null) {
             return servers;
@@ -422,9 +422,9 @@ public class DNSJavaService implements DNSService, DNSServiceMBean, Configurable
 
     private static String allowIPLiteral(String host) {
         if ((host.charAt(host.length() - 1) == '.')) {
-            String possible_ip_literal = host.substring(0, host.length() - 1);
-            if (org.xbill.DNS.Address.isDottedQuad(possible_ip_literal)) {
-                host = possible_ip_literal;
+            String possibleIpLiteral = host.substring(0, host.length() - 1);
+            if (org.xbill.DNS.Address.isDottedQuad(possibleIpLiteral)) {
+                host = possibleIpLiteral;
             }
         }
         return host;
@@ -448,8 +448,9 @@ public class DNSJavaService implements DNSService, DNSServiceMBean, Configurable
             if (records != null && records.length >= 1) {
                 ARecord a = (ARecord) records[0];
                 return InetAddress.getByAddress(name, a.getAddress().getAddress());
-            } else
+            } else {
                 throw e;
+            }
         } finally {
             timeMetric.stopAndPublish();
         }
@@ -477,8 +478,9 @@ public class DNSJavaService implements DNSService, DNSServiceMBean, Configurable
                     addrs[i] = InetAddress.getByAddress(name, a.getAddress().getAddress());
                 }
                 return ImmutableList.copyOf(addrs);
-            } else
+            } else {
                 throw e;
+            }
         } finally {
             timeMetric.stopAndPublish();
         }

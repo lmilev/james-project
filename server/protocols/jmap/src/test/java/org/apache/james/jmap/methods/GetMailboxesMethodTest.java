@@ -35,6 +35,7 @@ import org.apache.james.jmap.model.ClientId;
 import org.apache.james.jmap.model.GetMailboxesRequest;
 import org.apache.james.jmap.model.GetMailboxesResponse;
 import org.apache.james.jmap.model.MailboxFactory;
+import org.apache.james.jmap.model.Number;
 import org.apache.james.jmap.model.mailbox.Mailbox;
 import org.apache.james.jmap.model.mailbox.Role;
 import org.apache.james.jmap.model.mailbox.SortOrder;
@@ -138,7 +139,7 @@ public class GetMailboxesMethodTest {
                 .extracting(GetMailboxesResponse.class::cast)
                 .flatExtracting(GetMailboxesResponse::getList)
                 .extracting(Mailbox::getId, Mailbox::getName, Mailbox::getUnreadMessages)
-                .containsOnly(Tuple.tuple(InMemoryId.of(1), mailboxPath.getName(), 2L));
+                .containsOnly(Tuple.tuple(InMemoryId.of(1), mailboxPath.getName(), Number.fromLong(2L)));
     }
 
     @Test
@@ -281,7 +282,7 @@ public class GetMailboxesMethodTest {
                 .extracting(GetMailboxesResponse.class::cast)
                 .flatExtracting(GetMailboxesResponse::getList)
                 .extracting(Mailbox::getTotalMessages, Mailbox::getUnreadMessages)
-                .containsOnly(Tuple.tuple(0L, 0L));
+                .containsOnly(Tuple.tuple(Number.ZERO, Number.ZERO));
     }
 
     @Test
@@ -305,7 +306,7 @@ public class GetMailboxesMethodTest {
                 .extracting(GetMailboxesResponse.class::cast)
                 .flatExtracting(GetMailboxesResponse::getList)
                 .extracting(Mailbox::getTotalMessages)
-                .containsExactly(2L);
+                .containsExactly(Number.fromLong(2L));
     }
 
     @Test
@@ -317,8 +318,8 @@ public class GetMailboxesMethodTest {
         Flags defaultUnseenFlag = new Flags();
         Flags readMessageFlag = new Flags();
         readMessageFlag.add(Flags.Flag.SEEN);
-        messageManager.appendMessage(new ByteArrayInputStream("Subject: test\r\n\r\ntestmail".getBytes()), new Date(), mailboxSession, false, defaultUnseenFlag );
-        messageManager.appendMessage(new ByteArrayInputStream("Subject: test2\r\n\r\ntestmail".getBytes()), new Date(), mailboxSession, false, defaultUnseenFlag );
+        messageManager.appendMessage(new ByteArrayInputStream("Subject: test\r\n\r\ntestmail".getBytes()), new Date(), mailboxSession, false, defaultUnseenFlag);
+        messageManager.appendMessage(new ByteArrayInputStream("Subject: test2\r\n\r\ntestmail".getBytes()), new Date(), mailboxSession, false, defaultUnseenFlag);
         messageManager.appendMessage(new ByteArrayInputStream("Subject: test3\r\n\r\ntestmail".getBytes()), new Date(), mailboxSession, false, readMessageFlag);
         GetMailboxesRequest getMailboxesRequest = GetMailboxesRequest.builder()
                 .build();
@@ -332,7 +333,7 @@ public class GetMailboxesMethodTest {
                 .extracting(GetMailboxesResponse.class::cast)
                 .flatExtracting(GetMailboxesResponse::getList)
                 .extracting(Mailbox::getUnreadMessages)
-                .containsExactly(2L);
+                .containsExactly(Number.fromLong(2L));
     }
 
     @Test

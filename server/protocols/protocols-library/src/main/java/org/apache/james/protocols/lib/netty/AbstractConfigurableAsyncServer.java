@@ -160,10 +160,10 @@ public abstract class AbstractConfigurableAsyncServer extends AbstractAsyncServe
             return;
         }
 
-        String listen[] = config.getString("bind", "0.0.0.0:" + getDefaultPort()).split(",");
+        String[] listen = config.getString("bind", "0.0.0.0:" + getDefaultPort()).split(",");
         List<InetSocketAddress> bindAddresses = new ArrayList<>();
         for (String aListen : listen) {
-            String bind[] = aListen.split(":");
+            String[] bind = aListen.split(":");
 
             InetSocketAddress address;
             String ip = bind[0].trim();
@@ -233,8 +233,9 @@ public abstract class AbstractConfigurableAsyncServer extends AbstractAsyncServe
         useStartTLS = config.getBoolean("tls.[@startTLS]", false);
         useSSL = config.getBoolean("tls.[@socketTLS]", false);
 
-        if (useSSL && useStartTLS)
+        if (useSSL && useStartTLS) {
             throw new ConfigurationException("startTLS is only supported when using plain sockets");
+        }
 
         if (useStartTLS || useSSL) {
             enabledCipherSuites = config.getStringArray("tls.supportedCipherSuites.cipherSuite");
@@ -391,9 +392,9 @@ public abstract class AbstractConfigurableAsyncServer extends AbstractAsyncServe
                 SSLContext context = SSLContext.getInstance("TLS");
                 context.init(kmf.getKeyManagers(), null, null);
                 if (useStartTLS) {
-                	encryption = Encryption.createStartTls(context, enabledCipherSuites);
+                    encryption = Encryption.createStartTls(context, enabledCipherSuites);
                 } else {
-                	encryption = Encryption.createTls(context, enabledCipherSuites);
+                    encryption = Encryption.createTls(context, enabledCipherSuites);
                 }
             } finally {
                 if (fis != null) {

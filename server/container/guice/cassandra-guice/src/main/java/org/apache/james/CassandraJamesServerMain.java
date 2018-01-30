@@ -22,6 +22,7 @@ package org.apache.james;
 import org.apache.james.modules.MailboxModule;
 import org.apache.james.modules.data.CassandraDomainListModule;
 import org.apache.james.modules.data.CassandraJmapModule;
+import org.apache.james.modules.data.CassandraMailRepositoryModule;
 import org.apache.james.modules.data.CassandraRecipientRewriteTableModule;
 import org.apache.james.modules.data.CassandraSieveRepositoryModule;
 import org.apache.james.modules.data.CassandraUsersRepositoryModule;
@@ -42,6 +43,8 @@ import org.apache.james.modules.server.CassandraRoutesModule;
 import org.apache.james.modules.server.DataRoutesModules;
 import org.apache.james.modules.server.ElasticSearchMetricReporterModule;
 import org.apache.james.modules.server.JMXServerModule;
+import org.apache.james.modules.server.MailQueueRoutesModule;
+import org.apache.james.modules.server.MailRepositoriesRoutesModule;
 import org.apache.james.modules.server.MailboxRoutesModule;
 import org.apache.james.modules.server.SwaggerRoutesModule;
 import org.apache.james.modules.server.WebAdminServerModule;
@@ -55,6 +58,8 @@ public class CassandraJamesServerMain {
         new CassandraRoutesModule(),
         new DataRoutesModules(),
         new MailboxRoutesModule(),
+        new MailQueueRoutesModule(),
+        new MailRepositoriesRoutesModule(),
         new SwaggerRoutesModule(),
         new WebAdminServerModule());
 
@@ -73,6 +78,7 @@ public class CassandraJamesServerMain {
         new CassandraDomainListModule(),
         new CassandraJmapModule(),
         new CassandraMailboxModule(),
+        new CassandraMailRepositoryModule(),
         new CassandraMetricsModule(),
         new CassandraRecipientRewriteTableModule(),
         new CassandraSessionModule(),

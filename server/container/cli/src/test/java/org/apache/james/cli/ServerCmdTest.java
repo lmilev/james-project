@@ -117,7 +117,7 @@ public class ServerCmdTest {
         String[] arguments = { "-h", "127.0.0.1", "-p", "9999", CmdType.LISTDOMAINS.getCommand()};
         CommandLine commandLine = ServerCmd.parseCommandLine(arguments);
 
-        expect(dataProbe.listDomains()).andReturn(ImmutableList.<String> of());
+        expect(dataProbe.listDomains()).andReturn(ImmutableList.<String>of());
 
         control.replay();
         testee.executeCommandLine(commandLine);
@@ -347,7 +347,7 @@ public class ServerCmdTest {
         testee.executeCommandLine(commandLine);
         control.verify();
     }
-	
+
     @Test
     public void listUserMailboxesMappingsCommandShouldWork() throws Exception {
         String user = "user@domain";
@@ -826,8 +826,8 @@ public class ServerCmdTest {
             control.verify();
         }
     }
-	
-	
+
+
     @Test(expected = InvalidArgumentNumberException.class)
     public void importEmlFileToMailboxCommandShouldThrowOnMissingArguments() throws Exception {
         String user = "user@domain";
@@ -1138,7 +1138,7 @@ public class ServerCmdTest {
             control.verify();
         }
     }
-	
+
     @Test(expected = InvalidArgumentNumberException.class)
     public void listUserMailboxesMappingsCommandShouldThrowOnAdditionalArguments() throws Exception {
         String user = "user@domain";

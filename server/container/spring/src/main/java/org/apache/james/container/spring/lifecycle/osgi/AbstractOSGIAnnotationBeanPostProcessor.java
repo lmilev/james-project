@@ -53,9 +53,9 @@ import org.springframework.util.ReflectionUtils;
  *
  * @param <A>
  */
-public abstract class AbstractOSGIAnnotationBeanPostProcessor<A extends Annotation> extends InstantiationAwareBeanPostProcessorAdapter implements BundleContextAware, BeanClassLoaderAware, BeanFactoryAware{
+public abstract class AbstractOSGIAnnotationBeanPostProcessor<A extends Annotation> extends InstantiationAwareBeanPostProcessorAdapter implements BundleContextAware, BeanClassLoaderAware, BeanFactoryAware {
 
-    public final static long DEFAULT_TIMEOUT = 60 * 1000* 5;
+    public static final long DEFAULT_TIMEOUT = 60 * 1000 * 5;
     private BundleContext bundleContext;
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractOSGIAnnotationBeanPostProcessor.class);
@@ -77,6 +77,7 @@ public abstract class AbstractOSGIAnnotationBeanPostProcessor<A extends Annotati
     public void setTimeout(long timeout) {
         this.timeout = timeout;
     }
+    
     public void setLookupBeanFactory(boolean lookupBeanFactory) {
         this.lookupBeanFactory = lookupBeanFactory;
     }
@@ -85,10 +86,11 @@ public abstract class AbstractOSGIAnnotationBeanPostProcessor<A extends Annotati
 
         @SuppressWarnings("rawtypes")
         static void setInterfaces(Object importer, Class[] classes) {
-            if (importer instanceof OsgiServiceProxyFactoryBean)
+            if (importer instanceof OsgiServiceProxyFactoryBean) {
                 ((OsgiServiceProxyFactoryBean) importer).setInterfaces(classes);
-            else
+            } else {
                 ((OsgiServiceCollectionProxyFactoryBean) importer).setInterfaces(classes);
+            }
         }
 
         static void setBundleContext(Object importer, BundleContext context) {
@@ -100,10 +102,11 @@ public abstract class AbstractOSGIAnnotationBeanPostProcessor<A extends Annotati
         }
 
         static void setCardinality(Object importer, Cardinality cardinality) {
-            if (importer instanceof OsgiServiceProxyFactoryBean)
+            if (importer instanceof OsgiServiceProxyFactoryBean) {
                 ((OsgiServiceProxyFactoryBean) importer).setCardinality(cardinality);
-            else
+            } else {
                 ((OsgiServiceCollectionProxyFactoryBean) importer).setCardinality(cardinality);
+            }
         }
 
 
@@ -112,19 +115,21 @@ public abstract class AbstractOSGIAnnotationBeanPostProcessor<A extends Annotati
         }
 
         static void setFilter(Object importer, String filter) {
-            if (importer instanceof OsgiServiceProxyFactoryBean)
+            if (importer instanceof OsgiServiceProxyFactoryBean) {
                 ((OsgiServiceProxyFactoryBean) importer).setFilter(filter);
-            else
+            } else {
                 ((OsgiServiceCollectionProxyFactoryBean) importer).setFilter(filter);
+            }
         }
 
 
         @SuppressWarnings("unused")
         static void setServiceBean(Object importer, String name) {
-            if (importer instanceof OsgiServiceProxyFactoryBean)
+            if (importer instanceof OsgiServiceProxyFactoryBean) {
                 ((OsgiServiceProxyFactoryBean) importer).setServiceBeanName(name);
-            else
+            } else {
                 ((OsgiServiceCollectionProxyFactoryBean) importer).setServiceBeanName(name);
+            }
         }
     }
 
@@ -161,9 +166,8 @@ public abstract class AbstractOSGIAnnotationBeanPostProcessor<A extends Annotati
                     try {
                         logger.debug("Processing annotation [{}] for [{}.{}()] on bean [{}]", s, bean.getClass().getName(), method.getName(), beanName);
                         method.invoke(bean, getServiceImporter(s, method, beanName).getObject());
-                    }
-                    catch (Exception e) {
-                        throw new IllegalArgumentException("Error processing annotation " +s , e);
+                    } catch (Exception e) {
+                        throw new IllegalArgumentException("Error processing annotation " + s, e);
                     }
                 }
             });
@@ -189,8 +193,7 @@ public abstract class AbstractOSGIAnnotationBeanPostProcessor<A extends Annotati
                         ImporterCallAdapter.setCardinality(importer, Cardinality.C_0__1);
                     }
                     newprops.addPropertyValue(pd.getName(), importer.getObject());
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     throw new FatalBeanException("Could not create service reference", e);
                 }
             }
@@ -255,7 +258,7 @@ public abstract class AbstractOSGIAnnotationBeanPostProcessor<A extends Annotati
         
         // check if the we have a name for the requested bean. If so we set the filter for it
         if (filter != null) {
-            ImporterCallAdapter.setFilter(pfb, filter );
+            ImporterCallAdapter.setFilter(pfb, filter);
         }
         ImporterCallAdapter.setInterfaces(pfb, writeMethod.getParameterTypes());
         
